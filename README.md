@@ -1,6 +1,6 @@
 ﻿# Cursed Drone - Мод для Content Warning
 
-![Превью мода](preview.png)
+![Превью мода](https://github.com/expirius/CW-Cursed-Drone/blob/master/CW%20Cursed%20Drone/preview.png)
 
 Мод добавляет в игру "проклятого" дрона с необычным поведением и механиками, который сделает ваши стримы в Content Warning ещё харизматичнее!
 
