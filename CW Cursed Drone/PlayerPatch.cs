@@ -1,35 +1,24 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
-using Photon.Realtime;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.Xml;
-using System.Text;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 namespace CW_Cursed_Drone
 {
     [HarmonyPatch(typeof(Player))]
+    [HarmonyPatch("Update")]
     public class PlayerPatch
     {
-        private static Drone drone;
-
-        [HarmonyPatch("Update")]
         [HarmonyPostfix]
         public static void SpawnDroneOnInput(Player __instance)
         {
-            if (__instance != Player.localPlayer ||
-                !__instance.refs.view.IsMine ||
-                !Input.GetKeyDown(DroneSettings.SummonKey))
+            // проверяем нажата ли кнопка
+            if (!GlobalInputHandler.GetKeyDown(DroneKeySetting.SummonKey))
                 return;
-            // Получаем компонент Drone на этом же объекте
-            Drone drone = __instance.GetComponent<Drone>();
-            if (drone == null) return;
-            // Вызываем RPC через PhotonView игрока
-            __instance.refs.view.RPC(
-                "RPCA_AttachDrone",
-                RpcTarget.AllViaServer,
-                __instance.refs.view.OwnerActorNr); // передаем ID игрока
+            Debug.Log($"[Cursed Drone] Pressed Summon key {DroneKeySetting.SummonKey}");
+            DronePlugin drone = new();
+            //Debug.Log($"[Cursed Drone] drone name: {_currentDrone.name} spawn pos: {spawnPos}");
         }
     }
 }
