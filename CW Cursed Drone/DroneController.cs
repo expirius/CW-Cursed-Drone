@@ -135,7 +135,7 @@ namespace Cursed_Drone
 using Photon.Pun;
 using UnityEngine;
 
-namespace Cursed_Drone
+namespace CW_Cursed_Drone
 {
     public class DroneController : MonoBehaviourPun, IPunObservable
     {
@@ -169,16 +169,16 @@ namespace Cursed_Drone
 
         private void Update()
         {
-            if (targetPlayer == null || !photonView.IsMine) 
+            if (targetPlayer == null || !photonView.IsMine)
                 return;
 
             Vector3 targetPos = targetPlayer.transform.position + Vector3.up * 3f;
             transform.position = Vector3.Lerp(
-                transform.position, 
-                targetPos, 
+                transform.position,
+                targetPos,
                 followSpeed * Time.deltaTime
         );
-    }
+        }
 
         private void FollowPlayer()
         {

@@ -1,32 +1,35 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using UnityEngine;
 
-namespace Cursed_Drone
+namespace CW_Cursed_Drone
 {
     [HarmonyPatch(typeof(Player))]
     public class PlayerPatch
     {
-        private static GameObject dronePrefab;
+        private static Drone drone;
 
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
-        private static void SpawnDroneOnInput(Player __instance)
+        public static void SpawnDroneOnInput(Player __instance)
         {
             if (__instance != Player.localPlayer ||
                 !__instance.refs.view.IsMine ||
                 !Input.GetKeyDown(DroneSettings.SummonKey))
                 return;
-
-            if (dronePrefab == null)
-                dronePrefab = Resources.Load<GameObject>("DronePrefab");
-            
-            Vector3 spawnPos = __instance.transform.position + Vector3.up * 3f;
-            PhotonNetwork.Instantiate(dronePrefab.name, spawnPos, Quaternion.identity);
-
+            // Получаем компонент Drone на этом же объекте
+            Drone drone = __instance.GetComponent<Drone>();
+            if (drone == null) return;
+            // Вызываем RPC через PhotonView игрока
+            __instance.refs.view.RPC(
+                "RPCA_AttachDrone",
+                RpcTarget.AllViaServer,
+                __instance.refs.view.OwnerActorNr); // передаем ID игрока
         }
     }
 }

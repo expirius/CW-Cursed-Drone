@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Cursed_Drone
+namespace CW_Cursed_Drone
 {
     [ContentWarningPlugin("Cursed Drone", "1.0.0", false)]
     public class CursedDroneInfo
