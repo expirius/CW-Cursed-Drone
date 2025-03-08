@@ -8,6 +8,7 @@ namespace CW_Cursed_Drone
 {
     public class CursedDrone : Drone
     {
+        private DronePlugin dronePlugin;
         private PhotonView photonView;
         private Transform playerTarget;
         private Vector3 velocity;
@@ -22,10 +23,22 @@ namespace CW_Cursed_Drone
             this.spring = 8f;     // Жесткость пружины
             this.grav = 5f;       // Гравитация
         }
-        private DroneKeySetting _droneKeySpawnSetting;
+        //private DroneKeySetting _droneKeySpawnSetting;
         private void Awake()
         {
-            this._droneKeySpawnSetting = GameHandler.Instance.SettingsHandler.GetSetting<DroneKeySetting>();
+            // Важно: Не уничтожать объект здесь!
+            if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
+            Debug.Log("Drone created successfully");
+            // Добавьте инициализацию компонентов здесь
+        }
+        private void Start()
+        {
+            // Перенесите логику инициализации сюда
+            if (!photonView.IsMine) return;
+
+            // Настройка управления и физики
+            //GetComponent<Rigidbody>().isKinematic = false;
         }
         private void Update()
         {
