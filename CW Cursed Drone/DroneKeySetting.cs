@@ -11,12 +11,18 @@ namespace CW_Cursed_Drone
     {
         public SettingCategory GetSettingCategory() => SettingCategory.Mods;
         public string GetDisplayName() => "Drone Summon Key";
-        protected override KeyCode GetDefaultKey() => KeyCode.G;
-    }
-    public static class DroneSettings
-    {
-        private static DroneKeySetting _keySetting;
-        public static KeyCode SummonKey => _keySetting?.Keycode() ?? KeyCode.G;
-    }
 
+        public override int GetDefaultValue()
+        {
+            return (int)this.GetDefaultKey();
+        }
+        public override void ApplyValue()
+        {
+            Debug.Log("Set Mode Key to " + base.Value.ToString());
+        }
+        protected override KeyCode GetDefaultKey()
+        {
+            return KeyCode.G;
+        }
+    }
 }
