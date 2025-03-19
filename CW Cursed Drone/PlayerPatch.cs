@@ -1,6 +1,7 @@
 ﻿using DefaultNamespace.Artifacts;
 using HarmonyLib;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -13,8 +14,6 @@ namespace CW_Cursed_Drone
     [HarmonyPatch("Update")]
     public class PlayerPatch
     {
-        private GameObject droneObject;
-        private PhotonView m_PhotonView;
         public static DroneKeySetting SpawnButton = GameHandler.Instance.SettingsHandler.GetSetting<DroneKeySetting>();
 
         [HarmonyPostfix]
@@ -24,24 +23,44 @@ namespace CW_Cursed_Drone
             if (flag)
             {
                 Debug.Log($"[Cursed Drone] Pressed Summon key {SpawnButton.Keycode()}");
-
-                //Player.localPlayer.CallRevive();
-
-                this.m_PhotonView.RPC("RPCA_SpawnCursedDrone", RpcTarget.All);
-
-                Object.Instantiate<GameObject>(this.droneObject, Vector3.zero, Quaternion.Euler(new Vector3(0f, -30f, 0f))).GetComponent<CursedDrone>();
-
-                Debug.Log($"[Cursed Drone] Spawned: ");
+                CreateDrone(__instance);
 
             }
         }
-        [PunRPC]
-        private void RPCA_SpawnCursedDrone()
-        {
-            //List<Item> list = new List<Item>();
 
-            Object.Instantiate<GameObject>(this.droneObject, Vector3.zero, Quaternion.Euler(new Vector3(0f, -30f, 0f))).GetComponent<CursedDrone>();
+        static GameObject dronePrefab; // DELETE
+        static GameObject currentDrone;// deleete
+        static void CreateDrone(Player __instance) // DELETE
+        {
+
+            Debug.Log("[Cursed Drone] RPCA_SpawnCursedDrone is invoked");
+
+
+            // Проверяем загружен ли префаб
+            if (dronePrefab == null)
+            {
+                dronePrefab = CursedDroneInfo._bundle.LoadAsset<GameObject>("AltitudeHoldQuad");
+                Debug.Log($"[Cursed Drone] Prefab is {dronePrefab.ToString()}!");
+
+                var rb = dronePrefab.AddComponent<Rigidbody>();
+                rb.useGravity = false; // Отключаем гравитацию
+                rb.drag = 1.5f; // Добавляем сопротивление для плавности
+                dronePrefab.name = "Cursed Drone";
+            }
+
+            var cameraTransform = __instance.refs.cameraPos.transform;
+
+            currentDrone = Object.Instantiate(
+                dronePrefab,
+                cameraTransform.position + cameraTransform.forward * 2f,
+                Quaternion.identity
+            );
+
+            // Добавляем компонент для управления движением
+            var controller = currentDrone.AddComponent<CursedDroneBehaviour>();
+            controller.Initialize(__instance);
+
+            Debug.Log($"[Cursed Drone] droneObj = {controller.gameObject.name} ");
         }
     }
-
 }
