@@ -21,7 +21,7 @@ public class CursedDroneBehaviour : MonoBehaviour
         target = __instance;
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
-        Debug.Log($"[Cursed Drone] Cursed Drone is Initialize() target is {1}");
+        Debug.Log($"[Cursed Drone] Cursed Drone is Initialize() target pV.ViewID: {__instance.photonView.ViewID} , pV.Name: {__instance.photonView.name}");
     }
 
     void FixedUpdate()
