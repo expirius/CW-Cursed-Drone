@@ -17,7 +17,7 @@ namespace CW_Cursed_Drone
         [SerializeField]
         public AudioClip motorSound;
         [SerializeField]
-        public DronePhysicsBehaviour dronePhysics = new();
+        public DronePhysicsBehaviour dronePhysics;
         [SerializeField]
         public AudioSource source;
 
@@ -33,14 +33,15 @@ namespace CW_Cursed_Drone
         }
         void Update()
         {
-            //if (dronePhysics.armed)
-            //{
+            if (dronePhysics.armed)
+            {
                 if (!source.isPlaying)
                     source.PlayOneShot(motorSound);
 
                 source.pitch = pitchOffset + (dronePhysics.appliedForce.magnitude / dronePhysics.physicsConfig.thrust) * pitchFactor;
                 source.volume = volumeOffset + (dronePhysics.appliedForce.magnitude / dronePhysics.physicsConfig.thrust) * volumeFactor;
-            //}
+            }
         }
     }
+
 }
