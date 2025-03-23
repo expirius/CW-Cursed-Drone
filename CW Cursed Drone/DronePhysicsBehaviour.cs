@@ -15,7 +15,8 @@ namespace CW_Cursed_Drone
         public bool armed = true;
         private bool lastArmed = true;
 
-        public DronePhysicsConfiguration physicsConfig = new();
+        [SerializeField]
+        public DronePhysicsConfiguration physicsConfig;
         public LayerMask hoverEffectLayerMask;
 
         public UnityEvent OnArmed;
@@ -52,6 +53,7 @@ namespace CW_Cursed_Drone
         {
             if (armed)
             {
+                targetAltitude = transform.position.y;
                 // Process Input
                 switch (flightConfig)
                 {
@@ -67,10 +69,10 @@ namespace CW_Cursed_Drone
                 if (appliedTorque.magnitude > 0f)
                     rb.AddRelativeTorque(appliedTorque);
 
-                // Apply Force
+                /*// Apply Force
                 if (appliedForce.magnitude > physicsConfig.thrust)
                     appliedForce = appliedForce.normalized * physicsConfig.thrust;
-
+    */
                 rb.AddForce(appliedForce.y * transform.up);
 
                 // Update HoverEffect
@@ -117,27 +119,27 @@ namespace CW_Cursed_Drone
 
         private void AltitudeHold()
         {
-            targetAltitude = transform.position.y; // Автоматическое поддержание текущей высоты
+            //targetAltitude = transform.position.y; // Автоматическое поддержание текущей высоты
 
             float error = targetAltitude - transform.position.y; // Рассчет ошибки положения
+                                                                 // Рассчет базовой тяги для компенсации гравитации
+            float gravityCompensation = physicsConfig.mass * Mathf.Abs(Physics.gravity.y);
+            // PID-коррекция
+            float pdForce = altitudePID.CalculatePD(
+                error * Vector3.one,
+                physicsConfig.pAltitude,
+                physicsConfig.dAltitude
+            ).y;
 
-            float pdForce;
 
-            if (Mathf.Abs(error) > 0.5f)
-            {
-                targetAltitude = transform.position.y + 0.5f;
-            }
+            // Суммарная сила = компенсация гравитации + PID-коррекция
+            appliedForce = (gravityCompensation + pdForce) * Vector3.up;
 
-            pdForce = altitudePID.CalculatePD(error * Vector3.one, physicsConfig.pAltitude, physicsConfig.dAltitude).y;
+            // Ограничение максимальной тяги
+            appliedForce = Vector3.ClampMagnitude(appliedForce, physicsConfig.thrust);
 
-            if (pdForce < 0)
-                pdForce = 0;
-
-            appliedForce = pdForce * Vector3.up; // Применение силы
-
-            // Стабилизация углового положения (возврат в нейтральное положение)
-            targetQuad.localRotation = Quaternion.RotateTowards
-            (
+            // Стабилизация углов
+            targetQuad.localRotation = Quaternion.RotateTowards(
                 targetQuad.localRotation,
                 Quaternion.identity,
                 physicsConfig.autoStabilizeSpeed * Time.deltaTime

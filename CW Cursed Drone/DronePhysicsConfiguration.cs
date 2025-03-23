@@ -5,43 +5,40 @@ using UnityEngine;
 
 namespace CW_Cursed_Drone
 {
-    //[System.Serializable]
+    [System.Serializable]
     public class DronePhysicsConfiguration
     {
-        [SerializeField] public float autoStabilizeSpeed = 90f; // Скорость стабилизации в градусах/сек
-/*        public DronePhysicsConfiguration(DronePhysicsConfiguration physicsConfig)
+        public DronePhysicsConfiguration()
         {
-            thrust = physicsConfig.thrust;
-
-            mass = physicsConfig.mass;
-            drag = physicsConfig.drag;
-            angularDrag = physicsConfig.angularDrag;
-
-            p = physicsConfig.p;
-            i = physicsConfig.i;
-            d = physicsConfig.d;
-
-            pAltitude = physicsConfig.pAltitude;
-            iAltitude = physicsConfig.iAltitude;
-            dAltitude = physicsConfig.dAltitude;
-        }*/
+            autoStabilizeSpeed = 90f;
+            thrust = 28f;
+            mass = 2f;
+            drag = 1.2f;
+            angularDrag = 45f;
+            p = 0.8f;
+            d = 0.2f;
+            pAltitude = 8f;
+            dAltitude = 4f;
+        }
+        [SerializeField] public float autoStabilizeSpeed;
 
         [Header("Maximum Thrust [N]")]
-        public float thrust = 25;
+        public float thrust;
 
         [Header("Physics")]
-        public float mass = 2f;
-        public float drag = 1.2f;
-        public float angularDrag = 4f;
+        public float mass;
+        public float drag;
+        public float angularDrag;
 
         [Header("PID Rotation [Nm/Deg]")]
-        public float p = 0.8f;
-        public float i = 0f;
-        public float d = 0.2f;
+        public float p;
+        public float i;
+        public float d;
 
         [Header("PID Altitude [N/m]")]
-        public float pAltitude = 8f;
-        public float iAltitude = 0f;
-        public float dAltitude = 4f;
+        public float pAltitude;
+        public float iAltitude;
+        public float dAltitude;
     }
+
 }
