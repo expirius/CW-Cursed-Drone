@@ -43,19 +43,24 @@ namespace CW_Cursed_Drone
             );
 
             var dronePhysics = currentDrone.AddComponent<DronePhysicsBehaviour>();
-            
+            dronePhysics.physicsConfig = new DronePhysicsConfiguration();
+
             // Находим дочерний объект "Model"
             Transform modelTransform = currentDrone.transform.Find("Model");
             GameObject model = modelTransform.gameObject;
 
-            // Добавляем AudioSource к "Model"
-            AudioSource audioSource = model.AddComponent<AudioSource>();
-            audioSource.clip = CursedDroneInfo._bundle.LoadAsset<AudioClip>("MotorSound");
+/*            // Добавляем AudioSource к "Model"
+            AudioSource audioSource = CursedDroneInfo._bundle.LoadAsset<AudioSource>("MotorSound");
+*/
+            // Находим дочерний объект "MotorSound"
+            Transform motorSoundTransform = currentDrone.transform.Find("MotorSound");
+            AudioSource motorSoundSource = motorSoundTransform.GetComponent<AudioSource>();
 
             // Добавляем DroneAudioBehaviour к "Model"
             DroneSoundBehaviour audioBehaviour = model.AddComponent<DroneSoundBehaviour>();
-            audioBehaviour.motorSound = CursedDroneInfo._bundle.LoadAsset<AudioClip>("MotorSound");
-            audioBehaviour.source = audioSource;
+
+            audioBehaviour.motorSound = motorSoundSource.clip;
+            audioBehaviour.source = motorSoundSource;
             audioBehaviour.dronePhysics = dronePhysics;
             //
             var drone = currentDrone.AddComponent<CursedDroneBehaviour>();
