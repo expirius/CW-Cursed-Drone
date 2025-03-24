@@ -36,13 +36,13 @@ public class CursedDroneBehaviour : MonoBehaviour
         // Направление движения
         Vector3 direction = (targetPos - transform.position).normalized;
 
-        // Плавное вращение в сторону движения
-        if (rb.velocity.magnitude > 0.1f)
+        // Плавное вращение в сторону цели
+        if (direction != Vector3.zero)
         {
-            Quaternion lookRotation = Quaternion.LookRotation(rb.velocity.normalized);
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
-                lookRotation,
+                targetRotation,
                 Time.fixedDeltaTime * 5f
             );
         }
